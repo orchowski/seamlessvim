@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/bash
 prompt_install() {
 	echo -n "$1 is not installed. Would you like to install it? (y/n) " >&2
 	old_stty_cfg=$(stty -g)
@@ -54,11 +54,11 @@ fi
 check_for_software delve
 
 ## NVIM
-if [ -d "~/.config/nvim" ]; then
-	tar -czf ~/.config/nvim-$(date +%Y%m%d%H%M%S).tar.gz -C ~/.config/nvim .
+if [ -d "$HOME/.config/nvim" ]; then
+	echo "backup"
+	tar -czf ~/.config/nvim-$(date +%Y%m%d%H%M%S).tar.gz ~/.config/nvim 
 	rm -rf ~/.config/nvim
 fi
-
 
 git clone git@github.com:orchowski/seamlessvim.git ~/.config/nvim
 
