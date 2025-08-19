@@ -37,6 +37,7 @@ check_for_software() {
 	fi
 }
 
+check_for_software git
 check_for_software nvim
 check_for_software gcc
 check_for_software fzf
@@ -44,6 +45,9 @@ check_for_software luarocks
 
 if [ -d "~/.config/nvim" ]; then
 	tar -czf ~/.config/nvim-$(date +%Y%m%d%H%M%S).tar.gz -C ~/.config/nvim .
+	rm -rf ~/.config/nvim
 fi
 
+
+git clone git@github.com:orchowski/seamlessvim.git ~/.config/nvim
 
