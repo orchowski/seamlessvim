@@ -43,6 +43,17 @@ check_for_software gcc
 check_for_software fzf
 check_for_software luarocks
 
+
+# LSP Related
+# GO
+
+if ! [ -x "$(command -v go)" ]; then
+	echo "TODO: INSTALL GOLANG! ideally with GVM \n"
+fi
+# debugger
+check_for_software delve
+
+## NVIM
 if [ -d "~/.config/nvim" ]; then
 	tar -czf ~/.config/nvim-$(date +%Y%m%d%H%M%S).tar.gz -C ~/.config/nvim .
 	rm -rf ~/.config/nvim
