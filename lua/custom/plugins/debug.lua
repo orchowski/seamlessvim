@@ -144,5 +144,13 @@ return {
         detached = vim.fn.has 'win32' == 0,
       },
     }
+    dap.configurations.go = vim.list_extend(dap.configurations.go or {}, {
+      {
+        type = 'go',
+        name = 'Debug main in ./cmd',
+        request = 'launch',
+        program = '${workspaceFolder}/cmd',
+      },
+    })
   end,
 }
