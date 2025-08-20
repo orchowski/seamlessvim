@@ -36,14 +36,19 @@ check_for_software() {
 		echo "$1 is installed."
 	fi
 }
+system=`uname -a | grep -q "Linux" && echo "Linux" || echo "OSX"`
 
 check_for_software git
 check_for_software nvim
 check_for_software gcc
 check_for_software fzf
 check_for_software luarocks
-
-
+if [ "$system" = "OSX"]; then
+	check_for_software node
+else
+	check_for_software nodejs
+fi
+sudo npm i -g markdownlint-cli
 # LSP Related
 # GO
 
