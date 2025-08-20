@@ -1,21 +1,6 @@
 -- Funkcja do odczytania pliku konfiguracyjnego i znalezienia wartości workspace
 local function readWorkspace()
-  local config_path = os.getenv 'HOME' .. '/.config/nvim/lua/custom/plugins/neorg.lua'
-  for line in io.lines(config_path) do
-    if line:match 'default_workspace%s*=%s*".-"' then
-      local workspace_name = line:match 'default_workspace%s*=%s*"(.+)"'
-      for line in io.lines(config_path) do
-        if line:match 'workspaces%s*=%s*{' then
-          for line in io.lines(config_path) do
-            if line:match(workspace_name .. '%s*=%s*".-"') then
-              return line:match(workspace_name .. '%s*=%s*"(.-)"')
-            end
-          end
-        end
-      end
-    end
-  end
-  return nil
+  return '~/projects/notes/'
 end
 
 -- Funkcja do przeszukania katalogu i znalezienia plików .norg
@@ -39,7 +24,21 @@ end
 local function utworzDailies(files, workspace_path)
   local dailies_path = workspace_path .. '/dailies.norg'
   local file = io.open(dailies_path, 'w')
+  table.sort(files, function(a, b)
+    local da, ma, ya = a:match '(%d%d)%-(%d%d)%-(%d%d%d%d)%.norg'
+    local db, mb, yb = b:match '(%d%d)%-(%d%d)%-(%d%d%d%d)%.norg'
+    -- zamiana na liczby
+    ya, ma, da = tonumber(ya), tonumber(ma), tonumber(da)
+    yb, mb, db = tonumber(yb), tonumber(mb), tonumber(db)
 
+    if ya ~= yb then
+      return ya > yb
+    end
+    if ma ~= mb then
+      return ma > mb
+    end
+    return da > db
+  end)
   local current_year = nil
   local current_month = nil
   for _, full_path in ipairs(files) do
