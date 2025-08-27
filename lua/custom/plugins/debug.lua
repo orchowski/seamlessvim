@@ -145,28 +145,34 @@ return {
         buildFlags = { '-tags=unit,integration' },
       },
     }
-    dap.configurations.go = vim.list_extend(dap.configurations.go or {}, {
+    dap.configurations.go = vim.list_extend({
       {
         type = 'go',
-        name = 'Debug main in ./cmd',
+        name = 'MY Debug main in ./cmd',
         request = 'launch',
         program = '${workspaceFolder}/cmd',
       },
       {
         type = 'go',
-        name = 'Debug file',
+        name = 'MY Debug main in ./',
+        request = 'launch',
+        program = '${workspaceFolder}/',
+      },
+      {
+        type = 'go',
+        name = 'MY Debug file',
         request = 'launch',
         program = '${file}',
       },
       {
         type = 'go',
-        name = 'Debug module',
+        name = 'MY Debug module',
         request = 'launch',
         program = '${fileDirName}',
       },
       {
         type = 'go',
-        name = 'Debug test under cursor',
+        name = 'MY Debug test under cursor',
         request = 'launch',
         mode = 'test',
         program = '${fileDirname}',
@@ -181,9 +187,13 @@ return {
           end
         end,
       },
-    })
+    }, dap.configurations.go or {})
     for _, cfg in ipairs(dap.configurations.go) do
-      cfg.buildFlags = { '-tags=integration,unit' }
+      if string.find(cfg.name, 'MY') then
+        cfg.buildFlags = { '-tags=integration,unit' }
+      else
+        cfg.name = 'DEFAULT: ' .. cfg.name
+      end
     end
   end,
 }
