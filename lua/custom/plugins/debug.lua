@@ -142,6 +142,7 @@ return {
         -- On Windows delve must be run attached or it crashes.
         -- See https://github.com/leoluz/nvim-dap-go/blob/main/README.md#configuring
         detached = vim.fn.has 'win32' == 0,
+        buildFlags = { '-tags=unit,integration' },
       },
     }
     dap.configurations.go = vim.list_extend(dap.configurations.go or {}, {
@@ -151,6 +152,38 @@ return {
         request = 'launch',
         program = '${workspaceFolder}/cmd',
       },
+      {
+        type = 'go',
+        name = 'Debug file',
+        request = 'launch',
+        program = '${file}',
+      },
+      {
+        type = 'go',
+        name = 'Debug module',
+        request = 'launch',
+        program = '${fileDirName}',
+      },
+      {
+        type = 'go',
+        name = 'Debug test under cursor',
+        request = 'launch',
+        mode = 'test',
+        program = '${fileDirname}',
+        args = function()
+          local line = vim.fn.getline '.'
+          local name = line:match '^func%s+(Test%w+)'
+          if name then
+            return { '-test.run', name }
+          else
+            print 'Brak testu pod kursorem'
+            return {}
+          end
+        end,
+      },
     })
+    for _, cfg in ipairs(dap.configurations.go) do
+      cfg.buildFlags = { '-tags=integration,unit' }
+    end
   end,
 }

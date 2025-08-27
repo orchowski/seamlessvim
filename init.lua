@@ -672,7 +672,15 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         -- clangd = {},
-        gopls = {},
+        gopls = {
+          cmd = { 'gopls', '-rpc.trace', '-logfile', vim.fn.stdpath 'cache' .. '/gopls.log' },
+          cmd_env = { GOFLAGS = '-tags=integration' },
+          settings = {
+            gopls = {
+              buildFlags = { '-tags=integration' },
+            },
+          },
+        },
         -- pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs

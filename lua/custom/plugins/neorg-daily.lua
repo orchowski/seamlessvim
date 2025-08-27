@@ -76,37 +76,54 @@ local function dailySummary()
   print('Plik dailies.norg został utworzony w ' .. workspace_path)
 end
 
-local function DailyToday()
-  local workspace_path = readWorkspace()
-  if not workspace_path then
-    print 'Nie znaleziono workspace w konfiguracji Neorg.'
-    return
-  end
-  workspace_path = workspace_path:gsub('~', os.getenv 'HOME') -- zamień ~ na ścieżkę do katalogu domowego
-
-  local daily_path = workspace_path .. '/daily'
-  local today = os.date '%d-%m-%Y'
-  local today_file_path = daily_path .. '/' .. today .. '.norg'
-
-  -- Sprawdź, czy plik już istnieje
-  local file_exists = io.open(today_file_path, 'r')
-  if not file_exists then
-    -- Plik nie istnieje, więc go tworzymy i zapisujemy podstawową treść
-    local file = io.open(today_file_path, 'w')
-    if file then
-      file:write('#+TITLE: Daily Notes for ' .. today .. '\n\n')
-      file:close()
+local function DailyCreateWithOffsettFromToday(offset)
+  return function()
+    local workspace_path = readWorkspace()
+    if not workspace_path then
+      print 'Nie znaleziono workspace w konfiguracji Neorg.'
+      return
     end
-  else
-    -- Plik już istnieje, więc go tylko zamknij
-    file_exists:close()
-  end
+    workspace_path = workspace_path:gsub('~', os.getenv 'HOME') -- zamień ~ na ścieżkę do katalogu domowego
 
-  dailySummary()
-  -- Otwórz plik w nowym buforze Neovim
-  vim.api.nvim_command('edit ' .. today_file_path)
+    local daily_path = workspace_path .. '/daily'
+
+    local date = os.date '*t'
+    date.day = date.day + offset
+    local today = os.date('%d-%m-%Y', os.time(date))
+    local today_file_path = daily_path .. '/' .. today .. '.norg'
+
+    -- Sprawdź, czy plik już istnieje
+    local file_exists = io.open(today_file_path, 'r')
+    if not file_exists then
+      -- Plik nie istnieje, więc go tworzymy i zapisujemy podstawową treść
+      local file = io.open(today_file_path, 'w')
+      if file then
+        file:write('#+TITLE: Daily Notes for ' .. today .. '\n\n')
+        file:close()
+      end
+    else
+      -- Plik już istnieje, więc go tylko zamknij
+      file_exists:close()
+    end
+
+    dailySummary()
+    -- Otwórz plik w nowym buforze Neovim
+    vim.api.nvim_command('edit ' .. today_file_path)
+  end
 end
 
-vim.api.nvim_create_user_command('DailyToday', DailyToday, {})
+vim.api.nvim_create_user_command('DailyToday', DailyCreateWithOffsettFromToday(0), {})
+vim.api.nvim_create_user_command('DailyNext', DailyCreateWithOffsettFromToday(1), {})
+vim.api.nvim_create_user_command('DailyYesterday', DailyCreateWithOffsettFromToday(-1), {})
+vim.api.nvim_create_user_command('Daily', function(opts)
+  local offset = tonumber(opts.args) or 0
+
+  DailyCreateWithOffsettFromToday(offset)
+end, {
+  nargs = '?',
+  complete = function()
+    return { '-1', '0', '1', '7', '-7' } -- podpowiedzi
+  end,
+})
 vim.api.nvim_create_user_command('DailySummary', dailySummary, {})
 return {}
