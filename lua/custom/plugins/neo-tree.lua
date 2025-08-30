@@ -1,6 +1,12 @@
 -- Neo-tree is a Neovim plugin to browse the file system
 -- https://github.com/nvim-neo-tree/neo-tree.nvim
 
+vim.keymap.set('n', '<leader>cp', function()
+  local path = vim.fn.expand '%:.'
+  vim.fn.setreg('+', path)
+  print('Skopiowano: ' .. path)
+end, { desc = 'Copy relative file path to clipboard' })
+
 return {
   'nvim-neo-tree/neo-tree.nvim',
   version = '*',
