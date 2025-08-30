@@ -1,3 +1,13 @@
+-- hide virtual text
+vim.keymap.set('n', '<leader>dh', function()
+  vim.diagnostic.config { virtual_text = false }
+end, { desc = 'Hide diagnostic virtual text' })
+
+-- show virtual text
+vim.keymap.set('n', '<leader>ds', function()
+  vim.diagnostic.config { virtual_text = true }
+end, { desc = 'Show diagnostic virtual text' })
+
 vim.api.nvim_create_user_command('SetGoBuildTags', function(opts)
   if #opts.fargs == 0 then
     print 'Usage: :SetTags <tag1> <tag2> ...'
