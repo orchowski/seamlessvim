@@ -23,6 +23,8 @@ return {
 
     -- Add your own debuggers here
     'leoluz/nvim-dap-go',
+    'mfussenegger/nvim-dap-python',
+    'mxsdev/nvim-dap-vscode-js',
   },
   keys = {
     -- Basic debugging keymaps, feel free to change to your liking!
@@ -95,6 +97,11 @@ return {
       ensure_installed = {
         -- Update this to ensure that you have the debuggers for the langs you want
         'delve',
+        'debugpy',
+        'js-debug-adapter',
+        'kotlin-debug-adapter',
+        'java-debug-adapter',
+        'php-debug-adapter',
       },
     }
 
@@ -144,6 +151,11 @@ return {
         detached = vim.fn.has 'win32' == 0,
         buildFlags = { '-tags=unit,integration' },
       },
+    }
+    require('dap-python').setup(vim.fn.stdpath('data') .. '/mason/packages/debugpy/venv/bin/python')
+    require('dap-vscode-js').setup {
+      debugger_path = vim.fn.stdpath('data') .. '/mason/packages/js-debug-adapter',
+      adapters = { 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionHost' },
     }
     dap.configurations.go = vim.list_extend({
       {
