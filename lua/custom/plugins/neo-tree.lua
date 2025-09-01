@@ -6,7 +6,6 @@ vim.keymap.set('n', '<leader>cp', function()
   vim.fn.setreg('+', path)
   print('Skopiowano: ' .. path)
 end, { desc = 'Copy relative file path to clipboard' })
-
 return {
   'nvim-neo-tree/neo-tree.nvim',
   version = '*',
@@ -18,6 +17,6 @@ return {
   lazy = false,
   keys = {
     { '<C-n>', ':Neotree toggle<CR>', desc = 'NeoTree toggle', silent = true },
-    { '<C-S-s>', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
+    { '<A-s>', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
   },
 }
