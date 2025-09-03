@@ -10,6 +10,7 @@ local M = {
   },
   config = function()
     local neotest = require 'neotest'
+    local goTestTags = '--tags=integration'
 
     neotest.setup {
       adapters = {
@@ -28,9 +29,9 @@ local M = {
         -- Go adapter
         require 'neotest-golang' {
           -- Pass build tags directly to `go test`
-          go_test_args = { '-tags=integration', '-count=1', '-timeout=60s' },
+          go_test_args = { goTestTags, '-count=1', '-timeout=60s' },
           -- Alternatively, you can set them via env:
-          -- env = { GOFLAGS = "-tags=integration" },
+          env = { GOFLAGS = goTestTags },
           -- Disable dap-go integration (you already have custom DAP config)
           dap_go_enabled = false,
         },
