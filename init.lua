@@ -891,6 +891,7 @@ require('lazy').setup({
   },
 
   { 'catppuccin/nvim', name = 'catppuccin', priority = 1000 },
+  { 'shaunsingh/nord.nvim', name = 'nord', priority = 1000 },
 
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
@@ -910,7 +911,7 @@ require('lazy').setup({
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-moon'
+      vim.cmd.colorscheme 'nord'
     end,
   },
 
