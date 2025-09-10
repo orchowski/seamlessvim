@@ -407,10 +407,12 @@ require('lazy').setup({
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
         --
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
+        defaults = {
+          layout_strategy = 'vertical',
+          layout_config = { height = 0.95, width = 0.9 },
+          --   mappings = {
+          --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+        },
         -- },
         -- pickers = {}
         extensions = {
@@ -712,6 +714,7 @@ require('lazy').setup({
             },
           },
         },
+        kotlin_lsp = {},
       }
 
       -- Ensure the servers and tools above are installed
@@ -892,6 +895,18 @@ require('lazy').setup({
 
   { 'catppuccin/nvim', name = 'catppuccin', priority = 1000 },
   { 'shaunsingh/nord.nvim', name = 'nord', priority = 1000 },
+  {
+    'neanias/everforest-nvim',
+    version = false,
+    lazy = false,
+    priority = 1000, -- make sure to load this before all the other start plugins
+    -- Optional; default configuration will be used if setup isn't called.
+    config = function()
+      require('everforest').setup {
+        everforest_background = 'soft',
+      }
+    end,
+  },
 
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
@@ -911,7 +926,7 @@ require('lazy').setup({
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'nord'
+      vim.cmd.colorscheme 'everforest'
     end,
   },
 
