@@ -411,11 +411,17 @@ require('lazy').setup({
             width = 0.9,
           },
 
-          -- Pokazuje tylko ostatnie 3 segmenty ścieżki
-          path_display = {
-            'truncate',
-            shorten = { len = 1, exclude = { 1, -1 } }, -- skraca średnie katalogi do 1 litery
-          },
+          -- Show only the file name and two directories before it
+          path_display = function(opts, path)
+            local tail = require('telescope.utils').path_tail(path)
+            local split_path = vim.split(path, '/')
+            local len = #split_path
+            if len > 3 then
+              return table.concat({ split_path[len - 2], split_path[len - 1], tail }, '/')
+            else
+              return path
+            end
+          end,
 
           -- mappings = {
           --   i = { ['<c-enter>'] = 'to_fuzzy_refine' },
