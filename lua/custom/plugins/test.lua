@@ -10,7 +10,7 @@ local M = {
   },
   config = function()
     local neotest = require 'neotest'
-    local goTestTags = '--tags=integration'
+    local goTestTags = '--tags=integration,unit'
 
     neotest.setup {
       adapters = {

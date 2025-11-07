@@ -49,6 +49,8 @@ else
 	check_for_software nodejs
 fi
 sudo npm i -g markdownlint-cli
+
+npm install -g intelephense # php lsp
 # LSP Related
 # GO
 

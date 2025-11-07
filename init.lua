@@ -716,6 +716,7 @@ require('lazy').setup({
           },
         },
         kotlin_lsp = {},
+        intelephense = {}, -- php
       }
 
       -- Ensure the servers and tools above are installed
