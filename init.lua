@@ -404,21 +404,31 @@ require('lazy').setup({
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
       require('telescope').setup {
-        -- You can put your default mappings / updates / etc. in here
-        --  All the info you're looking for is in `:help telescope.setup()`
-        --
         defaults = {
           layout_strategy = 'vertical',
-          layout_config = { height = 0.95, width = 0.9 },
-          --   mappings = {
-          --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        },
-        -- },
-        -- pickers = {}
-        extensions = {
-          ['ui-select'] = {
-            require('telescope.themes').get_dropdown(),
+          layout_config = {
+            height = 0.95,
+            width = 0.9,
           },
+
+          -- Pokazuje tylko ostatnie 3 segmenty ścieżki
+          path_display = {
+            'truncate',
+            shorten = { len = 1, exclude = { 1, -1 } }, -- skraca średnie katalogi do 1 litery
+          },
+
+          -- mappings = {
+          --   i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+          -- },
+        },
+
+        pickers = {
+          -- tutaj możesz dodawać własne pickery np.
+          -- find_files = { theme = "dropdown" }
+        },
+
+        extensions = {
+          ['ui-select'] = require('telescope.themes').get_dropdown {},
         },
       }
 
@@ -716,7 +726,7 @@ require('lazy').setup({
           },
         },
         kotlin_lsp = {},
-        intelephense = {}, -- php
+        phpactor = {}, -- php
       }
 
       -- Ensure the servers and tools above are installed
