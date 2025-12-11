@@ -205,5 +205,108 @@ return {
         cfg.name = 'DEFAULT: ' .. cfg.name
       end
     end
+
+    -- Install PHP DAP config
+
+    -- Adapter setup
+    dap.adapters.php = {
+      type = 'executable',
+      command = 'node',
+      args = { vim.fn.stdpath 'data' .. '/mason/packages/php-debug-adapter/extension/out/phpDebug.js' },
+    }
+
+    -- Configurations
+    dap.configurations.php = vim.list_extend({
+      {
+        type = 'php',
+        name = 'MY Listen for Xdebug (Docker)',
+        request = 'launch',
+        port = 9000,
+        pathMappings = {
+          ['/var/www/html'] = '${workspaceFolder}',
+        },
+        log = true, -- ← Włącz
+        logFile = vim.fn.stdpath 'cache' .. '/dap-php.log', -- ← Dodaj
+      },
+      {
+        type = 'php',
+        name = 'MY Debug current file (CLI)',
+        request = 'launch',
+        port = 9003,
+        cwd = '${workspaceFolder}',
+        program = '${file}',
+        runtimeExecutable = 'docker-compose',
+        runtimeArgs = {
+          'exec',
+          '-T',
+          'web',
+          'php',
+        },
+        pathMappings = {
+          ['/var/www/html'] = '${workspaceFolder}',
+        },
+      },
+      {
+        type = 'php',
+        name = 'MY Debug PHPUnit current file',
+        request = 'launch',
+        port = 9003,
+        cwd = '${workspaceFolder}',
+        runtimeExecutable = 'docker-compose',
+        runtimeArgs = {
+          'exec',
+          '-T',
+          'web',
+          'vendor/bin/phpunit',
+          '${file}',
+        },
+        pathMappings = {
+          ['/var/www/html'] = '${workspaceFolder}',
+        },
+      },
+      {
+        type = 'php',
+        name = 'MY Debug PHPUnit test under cursor',
+        request = 'launch',
+        port = 9003,
+        cwd = '${workspaceFolder}',
+        runtimeExecutable = 'docker-compose',
+        runtimeArgs = function()
+          local line = vim.fn.getline '.'
+          local test_name = line:match 'function%s+(test%w+)'
+
+          if test_name then
+            return {
+              'exec',
+              '-T',
+              'web',
+              'vendor/bin/phpunit',
+              '--filter',
+              test_name,
+              '${file}',
+            }
+          else
+            print 'Brak testu pod kursorem'
+            return {
+              'exec',
+              '-T',
+              'web',
+              'vendor/bin/phpunit',
+              '${file}',
+            }
+          end
+        end,
+        pathMappings = {
+          ['/var/www/html'] = '${workspaceFolder}',
+        },
+      },
+    }, dap.configurations.php or {})
+
+    -- Add prefix to non-MY configurations (like your Go config)
+    for _, cfg in ipairs(dap.configurations.php) do
+      if not string.find(cfg.name, 'MY') then
+        cfg.name = 'DEFAULT: ' .. cfg.name
+      end
+    end
   end,
 }
