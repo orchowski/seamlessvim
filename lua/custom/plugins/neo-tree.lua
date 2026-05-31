@@ -17,6 +17,6 @@ return {
   lazy = false,
   keys = {
     { '<C-n>', ':Neotree toggle<CR>', desc = 'NeoTree toggle', silent = true },
-    { '<A-s>', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
+    { '<C-s>', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
   },
 }

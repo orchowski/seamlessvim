@@ -166,6 +166,17 @@ vim.o.scrolloff = 10
 -- See `:help 'confirm'`
 vim.o.confirm = true
 
+-- PHP: use spaces (4) not tabs — matches project / PHPStorm / PSR
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'php',
+  callback = function()
+    vim.bo.expandtab = true
+    vim.bo.tabstop = 4
+    vim.bo.shiftwidth = 4
+    vim.bo.softtabstop = 4
+  end,
+})
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -561,34 +572,43 @@ require('lazy').setup({
           -- or a suggestion from your LSP for this to activate.
           map('gta', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
 
+          -- Telescope LSP: use jump_type = "never" so we always open the picker and use the
+          -- select-then-edit path. Avoids "Invalid window id" when the single-result path
+          -- calls jump_to_location from a vim.schedule callback (race with window layout).
+          local function lsp_definitions_opts()
+            return require('telescope.builtin').lsp_definitions { jump_type = 'never' }
+          end
+          local function lsp_references_opts()
+            return require('telescope.builtin').lsp_references()
+          end
+          local function lsp_implementations_opts()
+            return require('telescope.builtin').lsp_implementations { jump_type = 'never' }
+          end
+          local function lsp_type_definitions_opts()
+            return require('telescope.builtin').lsp_type_definitions { jump_type = 'never' }
+          end
+
           -- Find references for the word under your cursor.
-          map('gtr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+          map('gtr', lsp_references_opts, '[G]oto [R]eferences')
 
           -- Jump to the implementation of the word under your cursor.
-          --  Useful when your language has ways of declaring types without an actual implementation.
-          map('gti', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
+          map('gti', lsp_implementations_opts, '[G]oto [I]mplementation')
 
           -- Jump to the definition of the word under your cursor.
-          --  This is where a variable was first declared, or where a function is defined, etc.
           --  To jump back, press <C-t>.
-          map('gtd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+          map('gtd', lsp_definitions_opts, '[G]oto [D]efinition')
 
           -- WARN: This is not Goto Definition, this is Goto Declaration.
-          --  For example, in C this would take you to the header.
           map('gtD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 
           -- Fuzzy find all the symbols in your current document.
-          --  Symbols are things like variables, functions, types, etc.
           map('gO', require('telescope.builtin').lsp_document_symbols, 'Open Document Symbols')
 
           -- Fuzzy find all the symbols in your current workspace.
-          --  Similar to document symbols, except searches over your entire project.
           map('gW', require('telescope.builtin').lsp_dynamic_workspace_symbols, 'Open Workspace Symbols')
 
           -- Jump to the type of the word under your cursor.
-          --  Useful when you're not sure what type a variable is and you want to see
-          --  the definition of its *type*, not where it was *defined*.
-          map('gtt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
+          map('gtt', lsp_type_definitions_opts, '[G]oto [T]ype Definition')
 
           -- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
           ---@param client vim.lsp.Client
@@ -790,22 +810,30 @@ require('lazy').setup({
         mode = '',
         desc = '[F]ormat buffer',
       },
+      {
+        '<leader>f',
+        function()
+          require('conform').format {
+            async = true,
+            lsp_format = 'fallback',
+            range = true,
+          }
+        end,
+        mode = 'v',
+        desc = '[F]ormat selection',
+      },
     },
     opts = {
       notify_on_error = false,
       format_on_save = function(bufnr)
-        -- Disable "format_on_save lsp_fallback" for languages that don't
-        -- have a well standardized coding style. You can add additional
-        -- languages here or re-enable it for the disabled ones.
+        -- Disable format on save for PHP: project uses PHP-CS-Fixer via git hooks;
+        -- team uses PHPStorm, we use nvim+phpactor — avoid editor formatting to prevent noise.
         local disable_filetypes = { c = true, cpp = true, php = true }
-        if disable_filetypes[vim.bo[bufnr].filetype] then
-          return nil
-        else
-          return {
-            timeout_ms = 500,
-            lsp_format = 'fallback',
-          }
+        local ft = vim.bo[bufnr].filetype
+        if disable_filetypes[ft] then
+          return false
         end
+        return nil
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
@@ -813,7 +841,7 @@ require('lazy').setup({
         python = { 'isort', 'black' },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
+        javascript = { 'prettierd', 'prettier', stop_after_first = true },
       },
     },
   },

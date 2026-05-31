@@ -161,24 +161,28 @@ return {
         name = 'MY Debug main in ./cmd',
         request = 'launch',
         program = '${workspaceFolder}/cmd',
+	outputMode = "remote",
       },
       {
         type = 'go',
         name = 'MY Debug main in ./',
         request = 'launch',
         program = '${workspaceFolder}/',
+	outputMode = "remote",
       },
       {
         type = 'go',
         name = 'MY Debug file',
         request = 'launch',
         program = '${file}',
+	outputMode = "remote",
       },
       {
         type = 'go',
         name = 'MY Debug module',
         request = 'launch',
         program = '${fileDirName}',
+	outputMode = "remote",
       },
       {
         type = 'go',
@@ -186,6 +190,7 @@ return {
         request = 'launch',
         mode = 'test',
         program = '${fileDirname}',
+	outputMode = "remote",
         args = function()
           local line = vim.fn.getline '.'
           local name = line:match '^func%s+(Test%w+)'
