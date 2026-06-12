@@ -754,6 +754,26 @@ require('lazy').setup({
       --
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
+      local server_runtime_requirements = {
+        gopls = { 'go' },
+        kotlin_lsp = { 'java' },
+        phpactor = { 'php', 'composer' },
+      }
+      for server_name, runtimes in pairs(server_runtime_requirements) do
+        if servers[server_name] then
+          local missing_runtime = false
+          for _, runtime in ipairs(runtimes) do
+            if vim.fn.executable(runtime) == 0 then
+              missing_runtime = true
+              break
+            end
+          end
+          if missing_runtime then
+            servers[server_name] = nil
+          end
+        end
+      end
+
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code

@@ -81,10 +81,15 @@ return {
     local dap = require 'dap'
     local dapui = require 'dapui'
 
+    local ensure_debuggers = {}
+    if vim.fn.executable 'go' == 1 then
+      table.insert(ensure_debuggers, 'delve')
+    end
+
     require('mason-nvim-dap').setup {
       -- Makes a best effort to setup the various debuggers with
       -- reasonable debug configurations
-      automatic_installation = true,
+      automatic_installation = false,
 
       -- You can provide additional configuration to the handlers,
       -- see mason-nvim-dap README for more information
@@ -92,10 +97,7 @@ return {
 
       -- You'll need to check that you have the required things installed
       -- online, please don't ask me how to install them :)
-      ensure_installed = {
-        -- Update this to ensure that you have the debuggers for the langs you want
-        'delve',
-      },
+      ensure_installed = ensure_debuggers,
     }
 
     -- Dap UI setup
