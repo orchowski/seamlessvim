@@ -4,5 +4,18 @@ test.sh
 nvim
 
 spell/
-lazy-lock.json
 .aider*
+
+# test fixtures: generated at test time
+test/fixtures/**/.venv/
+test/fixtures/**/vendor/
+test/fixtures/**/node_modules/
+test/fixtures/**/target/
+test/fixtures/**/.bloop/
+test/fixtures/**/.metals/
+test/fixtures/**/.settings/
+test/fixtures/**/.gradle/
+test/fixtures/**/.idea/
+test/fixtures/**/.classpath
+test/fixtures/**/.project
+test/fixtures/**/*.class
